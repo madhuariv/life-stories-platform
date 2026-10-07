@@ -239,7 +239,9 @@ onBeforeUnmount(() => {
       </p>
 
     </main>
-
+    
+    <SiteFooter />
+    
   </div>
 </template>
 

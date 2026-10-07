@@ -107,6 +107,8 @@ const toggleQuestion = (index: number) => {
 
     </main>
 
+    <SiteFooter />
+
   </div>
 </template>
 

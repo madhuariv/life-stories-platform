@@ -182,6 +182,8 @@ const submitStory = () => {
 
     </main>
 
+    <SiteFooter />
+
   </div>
 </template>
 

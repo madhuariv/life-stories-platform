@@ -240,6 +240,7 @@ const formatCategory = (category: string) => {
 
     </main>
 
+    <SiteFooter />
   </div>
 </template>
 
