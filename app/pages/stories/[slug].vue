@@ -31,39 +31,24 @@ const { data: story, error } = await useAsyncData(
   }
 )
 
-
-/* =========================
-   CATEGORY FORMATTING
-========================= */
-
 const formatCategory = (category: string) => {
   const categories: Record<string, string> = {
     education: 'Education',
     Education: 'Education',
-
     community: 'Community',
     Community: 'Community',
-
     'work-life': 'Work & Life',
     'Work-Life': 'Work & Life',
-
     'personal-growth': 'Personal Growth',
     'Personal-Growth': 'Personal Growth',
-
     environment: 'Environment',
     Environment: 'Environment',
-
     health: 'Health',
     Health: 'Health',
   }
 
   return categories[category] || category
 }
-
-
-/* =========================
-   DATE FORMATTING
-========================= */
 
 const formatDate = (date: string) => {
   if (!date) return ''
@@ -74,7 +59,6 @@ const formatDate = (date: string) => {
     year: 'numeric',
   })
 }
-
 
 /* =========================
    BONUS ANALYTICS
@@ -97,10 +81,9 @@ const trackScrollDepth = () => {
     return
   }
 
-  const scrollPercentage =
-    Math.round(
-      (scrollTop / scrollableHeight) * 100
-    )
+  const scrollPercentage = Math.round(
+    (scrollTop / scrollableHeight) * 100
+  )
 
   const milestones = [25, 50, 75, 100]
 
@@ -122,7 +105,6 @@ const trackScrollDepth = () => {
   })
 }
 
-
 onMounted(() => {
   startTime = Date.now()
 
@@ -140,17 +122,15 @@ onMounted(() => {
   )
 })
 
-
 onBeforeUnmount(() => {
   window.removeEventListener(
     'scroll',
     trackScrollDepth
   )
 
-  const secondsSpent =
-    Math.round(
-      (Date.now() - startTime) / 1000
-    )
+  const secondsSpent = Math.round(
+    (Date.now() - startTime) / 1000
+  )
 
   console.log(
     '[Analytics] Time spent on story',
@@ -163,158 +143,116 @@ onBeforeUnmount(() => {
 })
 </script>
 
-
 <template>
-  <main class="story-page">
-
-    <!-- =========================
-         SITE HEADER
-    ========================== -->
+  <div class="story-site">
 
     <SiteHeader />
 
+    <main class="story-page">
 
-    <!-- =========================
-         BACK LINK
-    ========================== -->
+      <!-- All Stories -->
+      <NuxtLink
+        to="/"
+        class="all-stories-link"
+      >
+        <span class="chevron">&lt;</span>
+        <span>All Stories</span>
+      </NuxtLink>
 
-    <NuxtLink
-      to="/"
-      class="back-link"
-    >
-      ← Back to Stories
-    </NuxtLink>
+      <!-- Error -->
+      <div
+        v-if="error"
+        class="error-message"
+      >
+        <h2>
+          Unable to load this story.
+        </h2>
 
-
-    <!-- =========================
-         ERROR
-    ========================== -->
-
-    <div
-      v-if="error"
-      class="error-message"
-    >
-
-      <h2>
-        Unable to load this story.
-      </h2>
-
-      <p>
-        Please try refreshing the page.
-      </p>
-
-    </div>
-
-
-    <!-- =========================
-         STORY
-    ========================== -->
-
-    <article
-      v-else-if="story"
-      class="story"
-    >
-
-      <!-- Category -->
-
-      <p class="category">
-        {{ formatCategory(story.category) }}
-      </p>
-
-
-      <!-- Title -->
-
-      <h1>
-        {{ story.title }}
-      </h1>
-
-
-      <!-- Author + Date -->
-
-      <div class="story-meta">
-
-        <span>
-          By {{ story.author }}
-        </span>
-
-        <span
-          v-if="story.publishedDate"
-          class="meta-divider"
-        >
-          •
-        </span>
-
-        <span v-if="story.publishedDate">
-          {{ formatDate(story.publishedDate) }}
-        </span>
-
+        <p>
+          Please try refreshing the page.
+        </p>
       </div>
 
+      <!-- Story -->
+      <article
+        v-else-if="story"
+        class="story"
+      >
 
-      <!-- Summary -->
+        <p class="category">
+          {{ formatCategory(story.category) }}
+        </p>
+
+        <h1>
+          {{ story.title }}
+        </h1>
+
+        <div class="story-meta">
+
+          <span>
+            By {{ story.author }}
+          </span>
+
+          <span
+            v-if="story.publishedDate"
+            class="meta-divider"
+          >
+            •
+          </span>
+
+          <span v-if="story.publishedDate">
+            {{ formatDate(story.publishedDate) }}
+          </span>
+
+        </div>
+
+        <p
+          v-if="story.summary"
+          class="story-intro"
+        >
+          {{ story.summary }}
+        </p>
+
+        <img
+          v-if="story.imageUrl"
+          :src="story.imageUrl"
+          :alt="story.title"
+          class="featured-image"
+        >
+
+        <div class="story-body">
+
+          <PortableText
+            v-if="story.body"
+            :value="story.body"
+          />
+
+        </div>
+
+      </article>
 
       <p
-        v-if="story.summary"
-        class="story-intro"
+        v-else
+        class="loading-message"
       >
-        {{ story.summary }}
+        Loading story...
       </p>
 
+    </main>
 
-      <!-- Featured Image -->
-
-      <img
-        v-if="story.imageUrl"
-        :src="story.imageUrl"
-        :alt="story.title"
-        class="featured-image"
-      >
-
-
-      <!-- Full Story Body -->
-
-      <div class="story-body">
-
-        <PortableText
-          v-if="story.body"
-          :value="story.body"
-        />
-
-      </div>
-
-
-      <!-- Bottom Navigation -->
-
-      <div class="story-footer">
-
-        <NuxtLink
-          to="/"
-          class="back-button"
-        >
-          ← Back to Stories
-        </NuxtLink>
-
-      </div>
-
-    </article>
-
-
-    <!-- =========================
-         LOADING
-    ========================== -->
-
-    <p
-      v-else
-      class="loading-message"
-    >
-      Loading story...
-    </p>
-
-  </main>
+  </div>
 </template>
 
-
 <style scoped>
+
+/* =========================
+   SITE
+========================= */
+
+.story-site {
+  width: 100%;
+}
+
 
 /* =========================
    PAGE
@@ -325,7 +263,9 @@ onBeforeUnmount(() => {
 
   margin: 0 auto;
 
-  padding: 32px 48px 80px;
+  padding: 0 48px 80px;
+
+  box-sizing: border-box;
 
   color: #333333;
 
@@ -337,41 +277,40 @@ onBeforeUnmount(() => {
 
 
 /* =========================
-   HEADER
+   ALL STORIES
 ========================= */
 
-.header {
-  display: flex;
+.all-stories-link {
+  display: inline-flex;
 
   align-items: center;
 
-  margin-bottom: 50px;
-}
+  gap: 7px;
 
-.site-logo {
-  width: 220px;
-  height: auto;
-}
-
-
-/* =========================
-   BACK LINK
-========================= */
-
-.back-link {
-  display: inline-block;
-
-  margin-bottom: 32px;
+  margin: 32px 0;
 
   color: #004b8d;
 
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
 
+  line-height: 1;
+
   text-decoration: none;
+
+  transition: color 0.2s ease;
 }
 
-.back-link:hover {
+.chevron {
+  display: inline-block;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  line-height: 1;
+}
+
+.all-stories-link:hover {
   color: #ef7c00;
 }
 
@@ -465,7 +404,7 @@ onBeforeUnmount(() => {
 
 
 /* =========================
-   FEATURED IMAGE
+   IMAGE
 ========================= */
 
 .featured-image {
@@ -488,7 +427,6 @@ onBeforeUnmount(() => {
 
 .story-body {
   width: 100%;
-  max-width: 100%;
 
   margin: 0;
 
@@ -504,27 +442,13 @@ onBeforeUnmount(() => {
   line-height: 1.75;
 }
 
-
-/* =========================
-   BODY PARAGRAPHS
-========================= */
-
 .story-body :deep(p) {
   margin: 0 0 10px;
 }
 
-
-/* Remove unnecessary gap
-   after final paragraph */
-
 .story-body :deep(p:last-child) {
   margin-bottom: 0;
 }
-
-
-/* =========================
-   BODY HEADINGS
-========================= */
 
 .story-body :deep(h2) {
   margin: 36px 0 15px;
@@ -548,11 +472,6 @@ onBeforeUnmount(() => {
   line-height: 1.3;
 }
 
-
-/* =========================
-   LISTS
-========================= */
-
 .story-body :deep(ul),
 .story-body :deep(ol) {
   margin: 0 0 18px;
@@ -564,11 +483,6 @@ onBeforeUnmount(() => {
   margin-bottom: 8px;
 }
 
-
-/* =========================
-   LINKS INSIDE STORY
-========================= */
-
 .story-body :deep(a) {
   color: #004b8d;
 
@@ -577,56 +491,6 @@ onBeforeUnmount(() => {
 
 .story-body :deep(a:hover) {
   color: #ef7c00;
-}
-
-
-/* =========================
-   STORY FOOTER
-========================= */
-
-.story-footer {
-  width: 100%;
-  max-width: 100%;
-
-  margin: 42px 0 0;
-
-  padding-top: 25px;
-
-  border-top: 1px solid #dddddd;
-}
-
-
-/* =========================
-   BACK BUTTON
-========================= */
-
-.back-button {
-  display: inline-flex;
-
-  align-items: center;
-
-  padding: 13px 20px;
-
-  background: #004b8d;
-
-  color: #ffffff;
-
-  border-radius: 8px;
-
-  font-size: 15px;
-  font-weight: 600;
-
-  text-decoration: none;
-
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
-}
-
-.back-button:hover {
-  background: #ef7c00;
-
-  transform: translateY(-2px);
 }
 
 
@@ -673,45 +537,28 @@ onBeforeUnmount(() => {
 @media (max-width: 768px) {
 
   .story-page {
-    padding: 24px 20px 60px;
+    padding: 0 20px 60px;
   }
 
+  .all-stories-link {
+    margin: 24px 0;
 
-  /* Header */
-
-  .header {
-    margin-bottom: 35px;
+    font-size: 15px;
   }
 
-  .site-logo {
-    width: 170px;
+  .chevron {
+    font-size: 15px;
   }
-
-
-  /* Back Link */
-
-  .back-link {
-    margin-bottom: 26px;
-  }
-
-
-  /* Title */
 
   .story h1 {
     font-size: 36px;
   }
-
-
-  /* Meta */
 
   .story-meta {
     margin-bottom: 22px;
 
     font-size: 14px;
   }
-
-
-  /* Summary */
 
   .story-intro {
     margin-bottom: 26px;
@@ -721,17 +568,11 @@ onBeforeUnmount(() => {
     line-height: 1.65;
   }
 
-
-  /* Image */
-
   .featured-image {
     max-height: 360px;
 
     margin-bottom: 30px;
   }
-
-
-  /* Body */
 
   .story-body {
     font-size: 17px;
@@ -740,16 +581,7 @@ onBeforeUnmount(() => {
   }
 
   .story-body :deep(p) {
-    margin-bottom: 16px;
-  }
-
-
-  /* Footer */
-
-  .story-footer {
-    margin-top: 35px;
-
-    padding-top: 22px;
+    margin-bottom: 10px;
   }
 
 }

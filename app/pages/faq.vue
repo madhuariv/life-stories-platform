@@ -36,83 +36,103 @@ const toggleQuestion = (index: number) => {
 </script>
 
 <template>
-  <main class="faq-page">
-<SiteHeader />
+  <div class="faq-site">
 
+    <!-- Site Header -->
+    <SiteHeader />
 
-    <!-- FAQ Content -->
-    <section class="faq-content">
+    <main class="faq-page">
 
+      <!-- All Stories -->
       <NuxtLink
         to="/"
-        class="back-link"
+        class="all-stories-link"
       >
-        ← Back to Stories
+        <span class="chevron">&lt;</span>
+        <span>All Stories</span>
       </NuxtLink>
 
+      <!-- FAQ Content -->
+      <section class="faq-content">
 
+        <h1>
+          Frequently Asked Questions
+        </h1>
 
-      <h1>
-        Frequently Asked Questions
-      </h1>
+        <p class="intro">
+           A few things you might want to know about Life Stories.
+        </p>
 
-      <p class="intro">
-        Find answers to some common questions about
-        Life Stories and how this demo platform works.
-      </p>
-
-
-      <!-- Questions -->
-      <div class="faq-list">
-
-        <div
-          v-for="(faq, index) in faqs"
-          :key="index"
-          class="faq-item"
-        >
-
-          <button
-            class="faq-question"
-            type="button"
-            @click="toggleQuestion(index)"
-          >
-            <span>
-              {{ faq.question }}
-            </span>
-
-            <span class="faq-icon">
-              {{ openQuestion === index ? '−' : '+' }}
-            </span>
-          </button>
-
+        <!-- Questions -->
+        <div class="faq-list">
 
           <div
-            v-if="openQuestion === index"
-            class="faq-answer"
+            v-for="(faq, index) in faqs"
+            :key="index"
+            class="faq-item"
           >
-            <p>
-              {{ faq.answer }}
-            </p>
+
+            <button
+              class="faq-question"
+              type="button"
+              :aria-expanded="openQuestion === index"
+              @click="toggleQuestion(index)"
+            >
+              <span>
+                {{ faq.question }}
+              </span>
+
+              <span
+                class="faq-icon"
+                aria-hidden="true"
+              >
+                {{ openQuestion === index ? '−' : '+' }}
+              </span>
+            </button>
+
+            <div
+              v-if="openQuestion === index"
+              class="faq-answer"
+            >
+              <p>
+                {{ faq.answer }}
+              </p>
+            </div>
+
           </div>
 
         </div>
 
-      </div>
+      </section>
 
-    </section>
+    </main>
 
-  </main>
+  </div>
 </template>
-
 
 <style scoped>
 
-/* PAGE */
+/* =========================
+   SITE
+========================= */
+
+.faq-site {
+  width: 100%;
+}
+
+
+/* =========================
+   PAGE
+========================= */
 
 .faq-page {
-  min-height: 100vh;
+  max-width: 1000px;
 
-  margin: 0;
+  margin: 0 auto;
+
+  padding: 0 48px 80px;
+
+  box-sizing: border-box;
 
   color: #333333;
 
@@ -123,86 +143,57 @@ const toggleQuestion = (index: number) => {
 }
 
 
-/* BLUE HEADER */
+/* =========================
+   ALL STORIES
+========================= */
 
-.top-bar {
-  display: flex;
+.all-stories-link {
+  display: inline-flex;
 
   align-items: center;
-  justify-content: space-between;
 
-  padding: 20px 48px;
+  gap: 7px;
 
-  background: #003d7c;
-}
+  margin: 32px 0;
 
-
-/* DEMO SITE */
-
-.site-name {
-  color: #ffffff;
-
-  font-size: 22px;
-  font-weight: 700;
-
-  text-decoration: none;
-
-  letter-spacing: 0.5px;
-}
-
-
-/* FAQ LINK */
-
-.faq-link {
-  color: #ffffff;
+  color: #004b8d;
 
   font-size: 16px;
   font-weight: 600;
 
+  line-height: 1;
+
   text-decoration: none;
+
+  transition: color 0.2s ease;
 }
 
-.faq-link:hover {
-  text-decoration: underline;
-}
-
-
-/* CONTENT */
-
-.faq-content {
-  max-width: 900px;
-
-  margin: 0 auto;
-
-  padding: 55px 48px 80px;
-}
-
-
-/* BACK */
-
-.back-link {
+.chevron {
   display: inline-block;
 
-  margin-bottom: 45px;
-
-  color: #004b8d;
-
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
 
-  text-decoration: none;
+  line-height: 1;
 }
 
-.back-link:hover {
+.all-stories-link:hover {
   color: #ef7c00;
 }
 
 
-/* SMALL LABEL */
+/* =========================
+   FAQ CONTENT
+========================= */
+
+.faq-content {
+  width: 100%;
+}
 
 
-
-/* TITLE */
+/* =========================
+   TITLE
+========================= */
 
 h1 {
   margin: 0 0 15px;
@@ -216,12 +207,14 @@ h1 {
 }
 
 
-/* INTRO */
+/* =========================
+   INTRO
+========================= */
 
 .intro {
   max-width: 650px;
 
-  margin: 0 0 40px;
+  margin: 0 0 40px 8px;
 
   color: #555555;
 
@@ -231,7 +224,9 @@ h1 {
 }
 
 
-/* FAQ LIST */
+/* =========================
+   FAQ LIST
+========================= */
 
 .faq-list {
   display: flex;
@@ -242,7 +237,9 @@ h1 {
 }
 
 
-/* FAQ ITEM */
+/* =========================
+   FAQ ITEM
+========================= */
 
 .faq-item {
   overflow: hidden;
@@ -255,7 +252,9 @@ h1 {
 }
 
 
-/* QUESTION */
+/* =========================
+   QUESTION
+========================= */
 
 .faq-question {
   display: flex;
@@ -284,6 +283,8 @@ h1 {
   text-align: left;
 
   cursor: pointer;
+
+  transition: background 0.2s ease;
 }
 
 .faq-question:hover {
@@ -291,9 +292,13 @@ h1 {
 }
 
 
-/* PLUS / MINUS */
+/* =========================
+   PLUS / MINUS
+========================= */
 
 .faq-icon {
+  flex-shrink: 0;
+
   margin-left: 20px;
 
   color: #ef7c00;
@@ -303,7 +308,9 @@ h1 {
 }
 
 
-/* ANSWER */
+/* =========================
+   ANSWER
+========================= */
 
 .faq-answer {
   padding: 0 22px 20px;
@@ -322,24 +329,24 @@ h1 {
 }
 
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 768px) {
 
-  .top-bar {
-    padding: 17px 20px;
+  .faq-page {
+    padding: 0 20px 60px;
   }
 
-  .site-name {
-    font-size: 19px;
+  .all-stories-link {
+    margin: 24px 0;
+
+    font-size: 15px;
   }
 
-  .faq-content {
-    padding: 40px 20px 60px;
-  }
-
-  .back-link {
-    margin-bottom: 32px;
+  .chevron {
+    font-size: 15px;
   }
 
   h1 {
@@ -359,10 +366,7 @@ h1 {
   }
 
   .faq-answer {
-    padding:
-      0
-      18px
-      18px;
+    padding: 0 18px 18px;
   }
 
 }
