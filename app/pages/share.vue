@@ -34,15 +34,7 @@ const submitStory = () => {
   <main class="share-page">
 
     <!-- NUS Logo -->
-    <header class="header">
-      <NuxtLink to="/">
-        <img
-          src="/Logo.png"
-          alt="National University of Singapore"
-          class="nus-logo"
-        >
-      </NuxtLink>
-    </header>
+ <SiteHeader />
 
     <!-- Back -->
     <NuxtLink

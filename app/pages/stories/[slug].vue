@@ -77,19 +77,12 @@ const formatDate = (date: string) => {
 
 
 /* =========================
-   BONUS:
-   FIRST-PARTY ANALYTICS
+   BONUS ANALYTICS
 ========================= */
 
 let startTime = 0
 
 const trackedScrollDepths = new Set<number>()
-
-
-/*
-  Checks how far the reader has
-  scrolled through the page.
-*/
 
 const trackScrollDepth = () => {
   const scrollTop =
@@ -109,20 +102,13 @@ const trackScrollDepth = () => {
       (scrollTop / scrollableHeight) * 100
     )
 
-  const milestones = [
-    25,
-    50,
-    75,
-    100
-  ]
+  const milestones = [25, 50, 75, 100]
 
   milestones.forEach((milestone) => {
-
     if (
       scrollPercentage >= milestone &&
       !trackedScrollDepths.has(milestone)
     ) {
-
       trackedScrollDepths.add(milestone)
 
       console.log(
@@ -133,18 +119,11 @@ const trackScrollDepth = () => {
         }
       )
     }
-
   })
 }
 
 
-/*
-  Runs when the story page
-  appears in the browser.
-*/
-
 onMounted(() => {
-
   startTime = Date.now()
 
   console.log(
@@ -159,17 +138,10 @@ onMounted(() => {
     'scroll',
     trackScrollDepth
   )
-
 })
 
 
-/*
-  Runs when the reader leaves
-  the story page.
-*/
-
 onBeforeUnmount(() => {
-
   window.removeEventListener(
     'scroll',
     trackScrollDepth
@@ -188,7 +160,6 @@ onBeforeUnmount(() => {
       seconds: secondsSpent
     }
   )
-
 })
 </script>
 
@@ -197,26 +168,14 @@ onBeforeUnmount(() => {
   <main class="story-page">
 
     <!-- =========================
-         NUS HEADER
+         SITE HEADER
     ========================== -->
 
-    <header class="header">
-
-      <NuxtLink to="/">
-
-        <img
-          src="/Logo.png"
-          alt="National University of Singapore"
-          class="nus-logo"
-        >
-
-      </NuxtLink>
-
-    </header>
+    <SiteHeader />
 
 
     <!-- =========================
-         BACK TO STORIES
+         BACK LINK
     ========================== -->
 
     <NuxtLink
@@ -312,7 +271,7 @@ onBeforeUnmount(() => {
       >
 
 
-      <!-- Full Story -->
+      <!-- Full Story Body -->
 
       <div class="story-body">
 
@@ -386,12 +345,11 @@ onBeforeUnmount(() => {
 
   align-items: center;
 
-  margin-bottom: 55px;
+  margin-bottom: 50px;
 }
 
-.nus-logo {
+.site-logo {
   width: 220px;
-
   height: auto;
 }
 
@@ -403,12 +361,11 @@ onBeforeUnmount(() => {
 .back-link {
   display: inline-block;
 
-  margin-bottom: 35px;
+  margin-bottom: 32px;
 
   color: #004b8d;
 
   font-size: 15px;
-
   font-weight: 600;
 
   text-decoration: none;
@@ -420,16 +377,24 @@ onBeforeUnmount(() => {
 
 
 /* =========================
+   STORY
+========================= */
+
+.story {
+  width: 100%;
+}
+
+
+/* =========================
    CATEGORY
 ========================= */
 
 .category {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 
   color: #ef7c00;
 
   font-size: 16px;
-
   font-weight: 700;
 
   line-height: 1.4;
@@ -441,9 +406,7 @@ onBeforeUnmount(() => {
 ========================= */
 
 .story h1 {
-  max-width: 850px;
-
-  margin: 0 0 18px;
+  margin: 0 0 16px;
 
   color: #003d7c;
 
@@ -453,7 +416,6 @@ onBeforeUnmount(() => {
     sans-serif;
 
   font-size: 48px;
-
   font-weight: 600;
 
   line-height: 1.15;
@@ -473,7 +435,7 @@ onBeforeUnmount(() => {
 
   gap: 9px;
 
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 
   color: #666666;
 
@@ -490,15 +452,15 @@ onBeforeUnmount(() => {
 ========================= */
 
 .story-intro {
-  max-width: 800px;
+  width: 100%;
 
-  margin: 0 0 35px;
+  margin: 0 0 32px;
 
   color: #444444;
 
-  font-size: 20px;
+  font-size: 19px;
 
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 
@@ -510,10 +472,9 @@ onBeforeUnmount(() => {
   display: block;
 
   width: 100%;
-
   max-height: 520px;
 
-  margin-bottom: 50px;
+  margin: 0 0 38px;
 
   object-fit: cover;
 
@@ -526,9 +487,10 @@ onBeforeUnmount(() => {
 ========================= */
 
 .story-body {
-  max-width: 760px;
+  width: 100%;
+  max-width: 100%;
 
-  margin: 0 auto;
+  margin: 0;
 
   color: #333333;
 
@@ -539,60 +501,79 @@ onBeforeUnmount(() => {
 
   font-size: 18px;
 
-  line-height: 1.85;
+  line-height: 1.75;
 }
 
+
+/* =========================
+   BODY PARAGRAPHS
+========================= */
 
 .story-body :deep(p) {
-  margin: 0 0 26px;
+  margin: 0 0 10px;
 }
 
+
+/* Remove unnecessary gap
+   after final paragraph */
+
+.story-body :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+
+/* =========================
+   BODY HEADINGS
+========================= */
 
 .story-body :deep(h2) {
-  margin: 45px 0 18px;
+  margin: 36px 0 15px;
 
   color: #003d7c;
 
-  font-size: 30px;
-
+  font-size: 28px;
   font-weight: 600;
 
   line-height: 1.3;
 }
-
 
 .story-body :deep(h3) {
-  margin: 36px 0 16px;
+  margin: 30px 0 14px;
 
   color: #003d7c;
 
-  font-size: 24px;
-
+  font-size: 23px;
   font-weight: 600;
 
   line-height: 1.3;
 }
 
+
+/* =========================
+   LISTS
+========================= */
 
 .story-body :deep(ul),
 .story-body :deep(ol) {
-  margin: 0 0 26px;
+  margin: 0 0 18px;
 
   padding-left: 28px;
 }
 
-
 .story-body :deep(li) {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
+
+/* =========================
+   LINKS INSIDE STORY
+========================= */
 
 .story-body :deep(a) {
   color: #004b8d;
 
   text-decoration: underline;
 }
-
 
 .story-body :deep(a:hover) {
   color: #ef7c00;
@@ -604,15 +585,20 @@ onBeforeUnmount(() => {
 ========================= */
 
 .story-footer {
-  max-width: 760px;
+  width: 100%;
+  max-width: 100%;
 
-  margin: 55px auto 0;
+  margin: 42px 0 0;
 
-  padding-top: 30px;
+  padding-top: 25px;
 
   border-top: 1px solid #dddddd;
 }
 
+
+/* =========================
+   BACK BUTTON
+========================= */
 
 .back-button {
   display: inline-flex;
@@ -628,7 +614,6 @@ onBeforeUnmount(() => {
   border-radius: 8px;
 
   font-size: 15px;
-
   font-weight: 600;
 
   text-decoration: none;
@@ -637,7 +622,6 @@ onBeforeUnmount(() => {
     background 0.2s ease,
     transform 0.2s ease;
 }
-
 
 .back-button:hover {
   background: #ef7c00;
@@ -660,13 +644,11 @@ onBeforeUnmount(() => {
   color: #b42318;
 }
 
-
 .error-message h2 {
   margin: 0 0 8px;
 
   font-size: 22px;
 }
-
 
 .error-message p {
   margin: 0;
@@ -695,61 +677,79 @@ onBeforeUnmount(() => {
   }
 
 
+  /* Header */
+
   .header {
-    margin-bottom: 40px;
+    margin-bottom: 35px;
   }
 
-
-  .nus-logo {
+  .site-logo {
     width: 170px;
   }
 
 
+  /* Back Link */
+
   .back-link {
-    margin-bottom: 28px;
+    margin-bottom: 26px;
   }
 
+
+  /* Title */
 
   .story h1 {
     font-size: 36px;
   }
 
 
+  /* Meta */
+
   .story-meta {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 
     font-size: 14px;
   }
 
 
-  .story-intro {
-    margin-bottom: 28px;
+  /* Summary */
 
-    font-size: 18px;
+  .story-intro {
+    margin-bottom: 26px;
+
+    font-size: 17px;
+
+    line-height: 1.65;
   }
 
+
+  /* Image */
 
   .featured-image {
     max-height: 360px;
 
-    margin-bottom: 35px;
+    margin-bottom: 30px;
   }
 
+
+  /* Body */
 
   .story-body {
     font-size: 17px;
 
-    line-height: 1.75;
+    line-height: 1.7;
   }
-
 
   .story-body :deep(p) {
-    margin-bottom: 22px;
+    margin-bottom: 16px;
   }
 
 
+  /* Footer */
+
   .story-footer {
-    margin-top: 40px;
+    margin-top: 35px;
+
+    padding-top: 22px;
   }
 
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { sanityClient } from '../utils/sanity'
 
-const query = `*[_type == "story"] | order(publishedDate desc) {
+const query = `*[_type == "story"] | order(featured desc, publishedDate desc) {
   _id,
   title,
   "slug": slug.current,
@@ -18,22 +18,6 @@ const { data: stories, error } = await useAsyncData(
   () => sanityClient.fetch(query)
 )
 
-/*
-  Separate stories using the Featured boolean
-  stored in Sanity.
-*/
-const featuredStories = computed(() =>
-  stories.value?.filter((story: any) => story.featured === true) || []
-)
-
-const regularStories = computed(() =>
-  stories.value?.filter((story: any) => story.featured !== true) || []
-)
-
-/*
-  Convert the database-friendly category value
-  into readable text for the website.
-*/
 const formatCategory = (category: string) => {
   const categories: Record<string, string> = {
     education: 'Education',
@@ -61,305 +45,235 @@ const formatCategory = (category: string) => {
 
 
 <template>
-  <main class="page">
+  <div class="site">
 
     <!-- =========================
-         NUS HEADER
+         FULL-WIDTH HEADER
     ========================== -->
 
-    <header class="header">
-      <img
-        src="/Logo.png"
-        alt="National University of Singapore"
-        class="nus-logo"
-      >
-    </header>
+    <SiteHeader />
 
 
     <!-- =========================
-         HERO
+         CENTERED PAGE CONTENT
     ========================== -->
 
-    <section class="hero">
+    <main class="page">
 
-      <h1>Life is a story.</h1>
+      <!-- =========================
+           HERO
+      ========================== -->
 
-      <p class="hero-subtitle">
-        What does yours say?
-      </p>
+      <section class="hero">
 
-      <img
-        src="/collaborative.png"
-        alt="People collaborating and sharing ideas"
-        class="hero-image"
-      >
+        <h1>
+          Life is a story
+        </h1>
 
-    </section>
-
-
-    <!-- =========================
-         ERROR
-    ========================== -->
-
-    <p
-      v-if="error"
-      class="error-message"
-    >
-      Unable to load stories.
-    </p>
-
-
-    <!-- =========================
-         FEATURED STORIES
-    ========================== -->
-
-    <section
-      v-if="featuredStories.length"
-      class="featured-section"
-    >
-
-      <div class="section-heading">
-
-        <p class="section-label">
-          Featured
+        <p class="hero-subtitle">
+          What does yours say?
         </p>
 
-        <h2>
-          Featured Stories
-        </h2>
-
-        <p class="section-description">
-          Selected stories and experiences worth discovering.
-        </p>
-
-      </div>
-
-
-      <div class="featured-grid">
-
-        <article
-          v-for="story in featuredStories"
-          :key="story._id"
-          class="featured-card"
+        <img
+          src="/collaborative.png"
+          alt="People collaborating and sharing ideas"
+          class="hero-image"
         >
 
-          <!-- Featured badge -->
-
-          <div class="featured-badge">
-            ★ Featured
-          </div>
+      </section>
 
 
-          <!-- Image -->
+      <!-- =========================
+           STORIES OF IMPACT
+      ========================== -->
 
-          <img
-            v-if="story.imageUrl"
-            :src="story.imageUrl"
-            :alt="story.title"
-            class="featured-image"
-          >
+      <section class="stories-section">
 
-
-          <!-- Content -->
-
-          <div class="featured-content">
-
-            <p class="story-category">
-              {{ formatCategory(story.category) }}
-            </p>
-
-
-            <h3>
-              {{ story.title }}
-            </h3>
-
-
-            <p class="story-summary">
-              {{ story.summary }}
-            </p>
-
-
-            <p class="story-author">
-              By {{ story.author }}
-            </p>
-
-
-            <NuxtLink
-              :to="`/stories/${story.slug}`"
-              class="read-button"
-            >
-              Read Story
-            </NuxtLink>
-
-          </div>
-
-        </article>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         STORIES OF IMPACT
-    ========================== -->
-
-    <section class="stories-section">
-
-      <div class="section-heading">
-
-        <h2>
-          Stories of Impact
-        </h2>
-
-        <p class="section-description">
-          Discover experiences, perspectives and moments that shape people's lives.
-        </p>
-
-      </div>
-
-
-      <div
-        v-if="regularStories.length"
-        class="stories-grid"
-      >
-
-        <article
-          v-for="story in regularStories"
-          :key="story._id"
-          class="story-card"
-        >
-
-          <!-- Image -->
-
-          <img
-            v-if="story.imageUrl"
-            :src="story.imageUrl"
-            :alt="story.title"
-            class="story-image"
-          >
-
-
-          <!-- Content -->
-
-          <div class="story-content">
-
-            <h3>
-              {{ story.title }}
-            </h3>
-
-
-            <p class="story-category">
-              {{ formatCategory(story.category) }}
-            </p>
-
-
-            <p class="story-summary">
-              {{ story.summary }}
-            </p>
-
-
-            <p class="story-author">
-              By {{ story.author }}
-            </p>
-
-
-            <NuxtLink
-              :to="`/stories/${story.slug}`"
-              class="read-button"
-            >
-              Read Story
-            </NuxtLink>
-
-          </div>
-
-        </article>
-
-      </div>
-
-
-      <p
-        v-else
-        class="empty-message"
-      >
-        More stories coming soon.
-      </p>
-
-    </section>
-
-
-    <!-- =========================
-         SHARE YOUR STORY
-    ========================== -->
-
-    <section class="share-story-section">
-
-      <div class="share-story-content">
-
-        <div class="share-story-text">
+        <div class="section-heading">
 
           <h2>
-            Have a story to share?
+            Stories of Impact
           </h2>
 
-          <p>
-            Your experience could inspire someone.
+          <p class="section-description">
+            Different journeys. Shared experiences. Lasting impact.
           </p>
 
         </div>
 
 
-        <!--
-          Visual only for now.
-          Later we can connect this to a
-          Share Your Story / Contact form.
-        -->
+        <!-- Error -->
 
-        <NuxtLink
-  to="/share"
-  class="share-story-button"
-  aria-label="Share your story"
->
-  →
-</NuxtLink>
+        <p
+          v-if="error"
+          class="error-message"
+        >
+          Unable to load stories.
+        </p>
 
-      </div>
 
-    </section>
+        <!-- Stories -->
 
-  </main>
+        <div
+          v-else-if="stories?.length"
+          class="stories-grid"
+        >
+
+          <article
+            v-for="story in stories"
+            :key="story._id"
+            class="story-card"
+            :class="{ 'featured-card': story.featured }"
+          >
+
+            <!-- Featured Badge -->
+
+            <div
+              v-if="story.featured"
+              class="featured-badge"
+            >
+              ★ Featured
+            </div>
+
+
+            <!-- Image -->
+
+            <div
+              class="image-wrapper"
+              :class="{
+                'featured-image-wrapper': story.featured
+              }"
+            >
+
+              <img
+                v-if="story.imageUrl"
+                :src="story.imageUrl"
+                :alt="story.title"
+                :class="
+                  story.featured
+                    ? 'featured-image'
+                    : 'story-image'
+                "
+              >
+
+            </div>
+
+
+            <!-- Story Content -->
+
+            <div class="story-content">
+
+              <p class="story-category">
+                {{ formatCategory(story.category) }}
+              </p>
+
+              <h3>
+                {{ story.title }}
+              </h3>
+
+              <p class="story-summary">
+                {{ story.summary }}
+              </p>
+
+              <p class="story-author">
+                By {{ story.author }}
+              </p>
+
+              <NuxtLink
+                :to="`/stories/${story.slug}`"
+                class="read-button"
+              >
+                Read Story
+              </NuxtLink>
+
+            </div>
+
+          </article>
+
+        </div>
+
+
+        <!-- Empty State -->
+
+        <p
+          v-else
+          class="empty-message"
+        >
+          More stories coming soon.
+        </p>
+
+      </section>
+
+
+      <!-- =========================
+           SHARE YOUR STORY
+      ========================== -->
+
+      <section class="share-story-section">
+
+        <div class="share-story-content">
+
+          <div class="share-story-text">
+
+            <h2>
+              Have a story to share?
+            </h2>
+
+            <p>
+              Your experience could inspire someone.
+            </p>
+
+          </div>
+
+
+          <NuxtLink
+            to="/share"
+            class="share-story-button"
+            aria-label="Share your story"
+          >
+            →
+          </NuxtLink>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
 </template>
 
 
 <style scoped>
 
 /* =========================
-   PAGE
+   SITE
 ========================= */
 
-.page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 48px;
-
-  font-family: Arial, Helvetica, sans-serif;
-
-  color: #333333;
+.site {
+  width: 100%;
 }
 
 
 /* =========================
-   HEADER
+   CENTERED PAGE
 ========================= */
 
-.header {
-  display: flex;
-  align-items: center;
-}
+.page {
+  max-width: 1200px;
 
-.nus-logo {
-  width: 220px;
-  height: auto;
+  margin: 0 auto;
+
+  padding: 0 48px 32px;
+
+  box-sizing: border-box;
+
+  color: #333333;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 
@@ -368,7 +282,7 @@ const formatCategory = (category: string) => {
 ========================= */
 
 .hero {
-  margin-top: 55px;
+  margin-top: 35px;
 
   text-align: center;
 }
@@ -390,6 +304,7 @@ const formatCategory = (category: string) => {
   color: #003d7c;
 
   font-size: 24px;
+  font-weight: 400;
 }
 
 .hero-image {
@@ -405,174 +320,46 @@ const formatCategory = (category: string) => {
 
 
 /* =========================
-   COMMON SECTION HEADING
+   STORIES SECTION
+========================= */
+
+.stories-section {
+  padding: 70px 0 80px;
+}
+
+
+/* =========================
+   SECTION HEADING
 ========================= */
 
 .section-heading {
-  margin-bottom: 40px;
+  margin-bottom: 45px;
 
   text-align: center;
 }
 
 .section-heading h2 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
 
   color: #003d7c;
 
-  font-size: 36px;
+  font-size: 38px;
   font-weight: 600;
 }
 
-.section-label {
-  margin: 0 0 8px;
-
-  color: #ef7c00;
-
-  font-size: 14px;
-  font-weight: 700;
-
-  text-transform: uppercase;
-
-  letter-spacing: 1.5px;
-}
-
 .section-description {
-  max-width: 650px;
+  margin: 0;
 
-  margin: 0 auto;
+  color: #555555;
 
-  color: #666666;
-
-  font-size: 16px;
+  font-size: 18px;
 
   line-height: 1.6;
 }
 
 
 /* =========================
-   FEATURED SECTION
-========================= */
-
-.featured-section {
-  padding: 65px 0 75px;
-}
-
-
-/* =========================
-   FEATURED GRID
-========================= */
-
-.featured-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 35px;
-}
-
-
-/* =========================
-   FEATURED CARD
-========================= */
-
-.featured-card {
-  position: relative;
-
-  display: flex;
-  flex-direction: column;
-
-  min-height: 100%;
-
-  overflow: hidden;
-
-  background: #f4f8fc;
-
-  border: 2px solid #003d7c;
-
-  border-radius: 20px;
-
-  box-shadow:
-    0 10px 28px rgba(0, 61, 124, 0.13);
-}
-
-
-/* =========================
-   FEATURED BADGE
-========================= */
-
-.featured-badge {
-  position: absolute;
-
-  top: 18px;
-  left: 18px;
-
-  z-index: 2;
-
-  padding: 8px 13px;
-
-  background: #ef7c00;
-
-  color: #ffffff;
-
-  border-radius: 20px;
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-
-/* =========================
-   FEATURED IMAGE
-========================= */
-
-.featured-image {
-  display: block;
-
-  width: 100%;
-  height: 280px;
-
-  object-fit: cover;
-}
-
-
-/* =========================
-   FEATURED CONTENT
-========================= */
-
-.featured-content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-
-  padding: 28px;
-
-  text-align: left;
-}
-
-.featured-content h3 {
-  margin: 0 0 15px;
-
-  color: #004b8d;
-
-  font-size: 28px;
-  font-weight: 600;
-
-  line-height: 1.3;
-}
-
-
-/* =========================
-   STORIES OF IMPACT
-========================= */
-
-.stories-section {
-  padding: 20px 0 80px;
-}
-
-
-/* =========================
-   REGULAR STORY GRID
+   STORY GRID
 ========================= */
 
 .stories-grid {
@@ -588,10 +375,12 @@ const formatCategory = (category: string) => {
 
 
 /* =========================
-   REGULAR STORY CARD
+   STORY CARD
 ========================= */
 
 .story-card {
+  position: relative;
+
   display: flex;
   flex-direction: column;
 
@@ -599,13 +388,13 @@ const formatCategory = (category: string) => {
 
   box-sizing: border-box;
 
-  padding: 35px;
+  overflow: hidden;
 
   background: #ffffff;
 
   border: 1px solid #e5e5e5;
 
-  border-radius: 18px;
+  border-radius: 20px;
 
   box-shadow:
     0 8px 24px rgba(0, 61, 124, 0.10);
@@ -624,16 +413,71 @@ const formatCategory = (category: string) => {
 
 
 /* =========================
-   REGULAR STORY IMAGE
+   FEATURED CARD
+========================= */
+
+.featured-card {
+  background: #f4f8fc;
+
+  border: 2px solid #003d7c;
+
+  box-shadow:
+    0 10px 28px rgba(0, 61, 124, 0.14);
+}
+
+
+/* =========================
+   FEATURED BADGE
+========================= */
+
+.featured-badge {
+  position: absolute;
+
+  top: 18px;
+  left: 18px;
+
+  z-index: 3;
+
+  padding: 8px 14px;
+
+  background: #ef7c00;
+
+  color: #ffffff;
+
+  border-radius: 22px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* =========================
+   IMAGE WRAPPER
+========================= */
+
+.image-wrapper {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 38px 30px 5px;
+}
+
+.featured-image-wrapper {
+  padding: 0;
+}
+
+
+/* =========================
+   REGULAR IMAGE
 ========================= */
 
 .story-image {
   display: block;
 
-  width: 145px;
-  height: 145px;
-
-  margin: 0 auto 28px;
+  width: 150px;
+  height: 150px;
 
   object-fit: cover;
 
@@ -644,7 +488,21 @@ const formatCategory = (category: string) => {
 
 
 /* =========================
-   REGULAR CONTENT
+   FEATURED IMAGE
+========================= */
+
+.featured-image {
+  display: block;
+
+  width: 100%;
+  height: 280px;
+
+  object-fit: cover;
+}
+
+
+/* =========================
+   STORY CONTENT
 ========================= */
 
 .story-content {
@@ -652,11 +510,34 @@ const formatCategory = (category: string) => {
   flex: 1;
   flex-direction: column;
 
+  padding: 30px 34px 34px;
+
   text-align: left;
 }
 
+
+/* =========================
+   CATEGORY
+========================= */
+
+.story-category {
+  margin: 0 0 10px;
+
+  color: #ef7c00;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 1.4;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
 .story-content h3 {
-  margin: 0 0 8px;
+  margin: 0 0 16px;
 
   color: #004b8d;
 
@@ -666,20 +547,9 @@ const formatCategory = (category: string) => {
   line-height: 1.3;
 }
 
-
-/* =========================
-   CATEGORY
-========================= */
-
-.story-category {
-  margin: 0 0 16px;
-
-  color: #ef7c00;
-
-  font-size: 16px;
-  font-weight: 700;
-
-  line-height: 1.4;
+.featured-card .story-content h3 {
+  font-size: 28px;
+  font-weight: 600;
 }
 
 
@@ -703,7 +573,7 @@ const formatCategory = (category: string) => {
 ========================= */
 
 .story-author {
-  margin: 0 0 24px;
+  margin: 0 0 25px;
 
   color: #555555;
 
@@ -740,6 +610,8 @@ const formatCategory = (category: string) => {
   font-size: 16px;
   font-weight: 600;
 
+  text-align: center;
+
   text-decoration: none;
 
   transition:
@@ -755,7 +627,7 @@ const formatCategory = (category: string) => {
 
 
 /* =========================
-   EMPTY / ERROR
+   ERROR / EMPTY
 ========================= */
 
 .error-message,
@@ -840,6 +712,7 @@ const formatCategory = (category: string) => {
   border-radius: 50%;
 
   font-size: 28px;
+
   text-decoration: none;
 
   cursor: pointer;
@@ -863,21 +736,14 @@ const formatCategory = (category: string) => {
 @media (max-width: 768px) {
 
   .page {
-    padding: 24px 20px;
-  }
-
-
-  /* Header */
-
-  .nus-logo {
-    width: 170px;
+    padding: 0 20px 24px;
   }
 
 
   /* Hero */
 
   .hero {
-    margin-top: 40px;
+    margin-top: 25px;
   }
 
   .hero h1 {
@@ -895,47 +761,26 @@ const formatCategory = (category: string) => {
   }
 
 
-  /* Sections */
-
-  .featured-section {
-    padding: 50px 0 55px;
-  }
+  /* Stories */
 
   .stories-section {
-    padding: 10px 0 60px;
+    padding: 50px 0 60px;
   }
 
   .section-heading {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
   }
 
   .section-heading h2 {
     font-size: 30px;
   }
 
-
-  /* Featured */
-
-  .featured-grid {
-    grid-template-columns: 1fr;
-
-    gap: 28px;
-  }
-
-  .featured-image {
-    height: 230px;
-  }
-
-  .featured-content {
-    padding: 24px;
-  }
-
-  .featured-content h3 {
-    font-size: 24px;
+  .section-description {
+    font-size: 16px;
   }
 
 
-  /* Regular Stories */
+  /* Grid */
 
   .stories-grid {
     grid-template-columns: 1fr;
@@ -943,8 +788,11 @@ const formatCategory = (category: string) => {
     gap: 28px;
   }
 
-  .story-card {
-    padding: 28px 22px;
+
+  /* Images */
+
+  .featured-image {
+    height: 230px;
   }
 
   .story-image {
@@ -952,8 +800,19 @@ const formatCategory = (category: string) => {
     height: 125px;
   }
 
+
+  /* Content */
+
+  .story-content {
+    padding: 26px 24px 28px;
+  }
+
   .story-content h3 {
     font-size: 22px;
+  }
+
+  .featured-card .story-content h3 {
+    font-size: 24px;
   }
 
   .story-summary {
@@ -961,7 +820,7 @@ const formatCategory = (category: string) => {
   }
 
 
-  /* CTA */
+  /* Share CTA */
 
   .share-story-section {
     padding: 0 0 45px;
@@ -986,7 +845,7 @@ const formatCategory = (category: string) => {
   .share-story-button {
     width: 48px;
     height: 48px;
-  
+
     font-size: 25px;
   }
 
